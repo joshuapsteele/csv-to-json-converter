@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.IOException;
 
 public class Application {
 
@@ -7,7 +8,12 @@ public class Application {
         CSVtoJSONService service = new CSVtoJSONService();
 
         File csvFile = ui.getCsvFile();
-        File jsonFile = service.convertCsvToJson(csvFile);
+        File jsonFile = null;
+        try {
+            jsonFile = service.convertCsvToJson(csvFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         ui.giveJsonFile(jsonFile);
 

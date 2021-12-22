@@ -22,7 +22,7 @@ public class CLI implements UI {
                 }
 
                 try (BufferedReader reader = Files.newBufferedReader(csvFile.toPath())) {
-                    System.out.println("Here are the contents of your CSV file:\n");
+                    System.out.println("\nHere are the contents of your CSV file:\n");
                     String line;
                     while ((line = reader.readLine()) != null) {
                         System.out.println(line);
