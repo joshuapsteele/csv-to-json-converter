@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.Arrays;
 
 public class CSVtoJSONService {
 
@@ -15,17 +14,21 @@ public class CSVtoJSONService {
         ) {
             String lineToRead;
             writer.write("[\n  {\n");
-            int numberOfIndentsLastLine = 1;
 
-            boolean isFirstLine = true;
+            int numberOfIndentsLastLine = 1;
+            boolean isFirstLineOfObject = true;
+
             while ((lineToRead = reader.readLine()) != null) {
+
                 int numberOfIndentsThisLine = 1;
                 String[] lineItems = lineToRead.split(",");
+
                 if (lineItems.length == 0) {
                     writer.write("\n  },\n  {\n");
-                    isFirstLine = true;
+                    isFirstLineOfObject = true;
                     continue;
                 }
+
                 for (int i = 0; i < lineItems.length; i++) {
 
                     if (lineItems[i].isEmpty()) {
@@ -41,8 +44,8 @@ public class CSVtoJSONService {
                         writer.write("},\n");
                     } else if (numberOfIndentsThisLine > numberOfIndentsLastLine) {
                         writer.write("{\n");
-                    } else if (isFirstLine) {
-                        isFirstLine = false;
+                    } else if (isFirstLineOfObject) {
+                        isFirstLineOfObject = false;
                     } else {
                         writer.write(",\n");
                     }
@@ -51,18 +54,22 @@ public class CSVtoJSONService {
                         writer.write("  ");
                     }
 
-                    if (!lineItems[i].isEmpty() && i == lineItems.length - 1) {
+                    if (i == lineItems.length - 1) {
                         writer.write("\"" + lineItems[i] + "\": ");
                         break;
-                    } else if (!lineItems[i].isEmpty() && lineItems[i + 1].contains("^")) {
+                    } else if (lineItems[i + 1].contains("^")) {
                         String[] lineItemSubArray = lineItems[i + 1].split("\\^");
-                        writer.write("\"" + lineItems[i] + "\": " + Arrays.toString(lineItemSubArray) + "\"");
+                        writer.write("\"" + lineItems[i] + "\": [");
+                        for (int m = 0; m < lineItemSubArray.length - 1; m++) {
+                            writer.write("\"" + lineItemSubArray[m] + "\", ");
+                        }
+                        writer.write("\"" + lineItemSubArray[lineItemSubArray.length - 1] + "\"]");
                         break;
-                    } else if (!lineItems[i].isEmpty() && !lineItems[i + 1].isEmpty()) {
+                    } else if (!lineItems[i + 1].isEmpty()) {
 
                         boolean isNumber = true;
                         try {
-                            int valueOfItem = Integer.parseInt(lineItems[i + 1]);
+                            Integer.parseInt(lineItems[i + 1]);
                         } catch (NumberFormatException e) {
                             isNumber = false;
                         }
